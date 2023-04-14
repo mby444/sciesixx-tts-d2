@@ -170,10 +170,41 @@ body::-webkit-scrollbar{
 /* End Profile Section */
 
 /* Main Section */
+.tts-wrapper {
+    display: flex;
+    justify-content: center;
+}
+.tts-container {
+    width: 90%;
+    overflow-x: auto;
+}
+.tts-table {
+    border-collapse: collapse;
+}
+.tts-table tr {
+    width: calc(40px * 27);
+}
+.tts-table tr td {
+    /* background-color: var(--color-4); */
+}
+.tts-table tr td input {
+    width: 40px;
+    height: 40px;
+    outline: none;
+    text-align: center;
+    font-size: 16pt;
+    border: none;
+    border: 1px solid var(--color-gradient-black-2);
+    visibility: hidden;
+}
+.visible-tts-input {
+    visibility: visible !important;
+}
 .main-btn-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 4rem;
 }
 .main-btn-wrapper > button {
     background-color: var(--btn-color-4);
@@ -186,6 +217,11 @@ body::-webkit-scrollbar{
     border: 1px solid var(--color-gradient-black-4);
     color: var(--color-4);
     margin: 0 2rem;
+    cursor: pointer;
+    transition: 0.1s;
+}
+.main-btn-wrapper > button:hover {
+    background-color: var(--color-3);
 }
 /* End Main Section */
 
@@ -211,6 +247,16 @@ body::-webkit-scrollbar{
     height: 2px;
     background-color: var(--color-gradient-black-3);
     margin-top: 8px;
+}
+.hq-container,
+.vq-container {
+    margin-bottom: 1.5rem;
+}
+.hq-text,
+.vq-text {
+    font-size: 14pt;
+    font-weight: 500;
+    padding-bottom: 2px;
 }
 /* End Question Section */
 
@@ -281,6 +327,12 @@ body::-webkit-scrollbar{
     background-color: transparent;
     font-weight: 550;
     box-shadow: 0 0 5px 1px #0002;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.reset-btn:hover {
+    background-color: var(--btn-color-4);
+    color: var(--color-4);
 }
 /* End Score Section */
 
@@ -291,9 +343,9 @@ body::-webkit-scrollbar{
     margin-bottom: 1rem;
 }
 .site-link {
-    color: var(--color-5);
-    font-weight: 600;
-    font-size: 11pt;
+    color: var(--color-gradient-black-2);
+    font-weight: 800;
+    font-size: 12pt;
 }
 /* End Site Link Section */
 
@@ -311,7 +363,7 @@ footer {
 .footer-text-1 {
     color: var(--color-5);
 }
-.footer-text-2 {
-
+.footer-text-link {
+    color: var(--color-4);
 }
 /* End Footer */
