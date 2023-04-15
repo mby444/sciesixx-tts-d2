@@ -1,126 +1,202 @@
+import { orders } from "./constant/tts.js";
+
 const select = document.querySelector.bind(document);
 const selectAll = document.querySelectorAll.bind(document);
 
+const getProgress = (key) => {
+    return localStorage.getItem(key);
+};
+
+const saveProgress = (key, data) => {
+    data = typeof data === "string" ? data : JSON.stringify(data);
+    localStorage.setItem(key, data);
+};
+
+const deleteProgress = (key) => {
+    localStorage.removeItem(key);
+};
+
+const setSubmitMode = () => {
+
+};
+
+const unsetSubmitMode = () => {
+
+};
+
+const storeIdentityInput = (name, roll, grade) => {
+    const storageKey = "@sciesixx_tts_identity";
+    const data = {
+        name: name.value || "",
+        roll: roll.value || "",
+        grade: grade.value || "",
+    };
+    saveProgress(storageKey, data);
+};
+
+const storeTTSInput = (...ttsInputLists) => {
+    const storageKey = "@sciesixx_tts_main";
+    const ttsValues = ttsInputLists.map((input) => input.value);
+    saveProgress(storageKey, ttsValues);
+};
+
+const getTTSAnswerKeys = async () => {
+    try {
+        const rawResponse = await fetch("./rest/tts.php", {
+            method: "PATCH",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        });
+        const response = await rawResponse.json();
+        const { data } = response;
+        return data;
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
+};
+
+const compareTTSAnswer = (answers, answerKeys) => {
+    
+};
+
+const submitTTS = async () => {
+    const ttsAnswerKeys = await getTTSAnswerKeys();
+    console.log(ttsAnswerKeys);
+};
+
+const restoreIdentityInput = (...inputLists) => {
+    const storageKey = "@sciesixx_tts_identity";
+    const jsonData = getProgress(storageKey);
+    if (!jsonData) return;
+    const data = JSON.parse(jsonData);
+    const dataValues = [data.name, data.roll, data.grade];
+    inputLists.forEach((input, i) => {
+        input.value = dataValues[i];
+    });
+};
+
+const restoreTTSInput = (...ttsInputLists) => {
+    const storageKey = "@sciesixx_tts_main";
+    const jsonData = getProgress(storageKey);
+    if (!jsonData) return;
+    const data = JSON.parse(jsonData);
+    ttsInputLists.forEach((input, i) => {
+        input.value = data[i];
+    });
+};
+
 const enableTTS = () => {
-    const tds = selectAll(".tts-table td");
     const inputs = selectAll(".tts-table input");
-    const orders = [
-        // Row 1 - 6
-        27 * 0 + 22,
-        27 * 1 + 22,
-        27 * 2 + 22,
-        27 * 3 + 22,
-        27 * 4 + 22,
-        27 * 5 + 22,
-        // Row 7
-        27 * 6 + 14,
-        27 * 6 + 15,
-        27 * 6 + 16,
-        27 * 6 + 17,
-        27 * 6 + 18,
-        27 * 6 + 19,
-        27 * 6 + 20,
-        27 * 6 + 21,
-        27 * 6 + 22,
-        27 * 6 + 23,
-        27 * 6 + 24,
-        27 * 6 + 25,
-        // Row 8 - 11
-        27 * 7 + 19,
-        27 * 8 + 19,
-        27 * 9 + 10,
-        27 * 9 + 19,
-        27 * 10 + 10,
-        27 * 10 + 19,
-        // Row 12
-        27 * 11 + 6,
-        27 * 11 + 7,
-        27 * 11 + 8,
-        27 * 11 + 9,
-        27 * 11 + 10,
-        27 * 11 + 11,
-        27 * 11 + 16,
-        27 * 11 + 19,
-        // Row 13
-        27 * 12 + 6,
-        27 * 12 + 10,
-        27 * 12 + 11,
-        27 * 12 + 12,
-        27 * 12 + 13,
-        27 * 12 + 14,
-        27 * 12 + 15,
-        27 * 12 + 16,
-        27 * 12 + 17,
-        27 * 12 + 18,
-        27 * 12 + 19,
-        // Row 14
-        27 * 13 + 6,
-        27 * 13 + 10,
-        27 * 13 + 16,
-        27 * 13 + 19,
-        // Row 15
-        27 * 14 + 6,
-        27 * 14 + 10,
-        27 * 14 + 11,
-        27 * 14 + 12,
-        27 * 14 + 16,
-        27 * 14 + 21,
-        27 * 14 + 22,
-        27 * 14 + 23,
-        27 * 14 + 24,
-        27 * 14 + 25,
-        27 * 14 + 26,
-        27 * 14 + 27,
-        // Row 16 - 17
-        27 * 15 + 6,
-        27 * 15 + 16,
-        27 * 15 + 21,
-        27 * 16 + 6,
-        27 * 16 + 16,
-        27 * 16 + 21,
-        // Row 18
-        27 * 17 + 6,
-        27 * 17 + 16,
-        27 * 17 + 17,
-        27 * 17 + 18,
-        27 * 17 + 19,
-        27 * 17 + 20,
-        27 * 17 + 21,
-        27 * 17 + 22,
-        27 * 17 + 23,
-        27 * 17 + 24,
-        // Row 19
-        27 * 18 + 6,
-        27 * 18 + 21,
-        // Row 20
-        27 * 19 + 3,
-        27 * 19 + 4,
-        27 * 19 + 5,
-        27 * 19 + 6,
-        27 * 19 + 7,
-        27 * 19 + 8,
-        27 * 19 + 9,
-        27 * 19 + 10,
-        27 * 19 + 11,
-        27 * 19 + 21,
-        // Row 21 - 24
-        27 * 20 + 4,
-        27 * 21 + 4,
-        27 * 22 + 4,
-        27 * 23 + 4,
-        // Row 25
-        27 * 24 + 1,
-        27 * 24 + 2,
-        27 * 24 + 3,
-        27 * 24 + 4,
-        // Row 26
-        27 * 25 + 4,
-    ];
-    orders.forEach((order, i) => {
+    orders.forEach((order) => {
         inputs[order - 1].classList.add("visible-tts-input");
     });
 };
 
-window.addEventListener("load", () => {
+const confirmClearTTS = (callback=Function(), errCallback=Function()) => {
+    const isSubmitMode = false;
+    const ttsInputs = selectAll(".visible-tts-input");
+    const isTTSEmpty = [...ttsInputs].every((input) => !input.value);
+    if (isSubmitMode || isTTSEmpty) return errCallback();
+    const confirmMessage = "Hapus semua kolom?";
+    switch (typeof Swal) {
+        case "function": {
+            Swal.fire({
+                title: confirmMessage,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#dc3741",
+                confirmButtonText: "Hapus",
+                cancelButtonText: "Batal",
+            })
+            .then((result) => {
+                result.isConfirmed ? callback() : errCallback();
+            })
+            .catch((err) => {
+                errCallback();
+            });
+            break;
+        }
+        default: {
+            const confirmed = confirm(confirmMessage);
+            confirmed ? callback() : errCallback();
+        }
+    }
+};
+
+const clearTTS = () => {
+    const ttsStorageKey = "@sciesixx_tts_main";
+    const ttsInputs = selectAll(".visible-tts-input");
+    deleteProgress(ttsStorageKey);
+    ttsInputs.forEach((input) => {
+        input.value = "";
+    });
+};
+
+const initIdentityInput = () => {
+    const nameInput = select(".name-input");
+    const rollInput = select(".roll-input");
+    const gradeInput = select(".grade-input");
+    const inputLists = [nameInput, rollInput, gradeInput];
+
+    restoreIdentityInput(...inputLists);
+
+    nameInput.addEventListener("input", () => {
+        storeIdentityInput(...inputLists);
+    });
+    rollInput.addEventListener("input", () => {
+        storeIdentityInput(...inputLists);
+    });
+    gradeInput.addEventListener("input", () => {
+        storeIdentityInput(...inputLists);
+    });
+};
+
+const initTTSInput = () => {
     enableTTS();
+    const ttsInputs = selectAll(".visible-tts-input");
+    restoreTTSInput(...ttsInputs);
+    ttsInputs.forEach((ttsInput) => {
+        ttsInput.addEventListener("input", () => {
+            storeTTSInput(...ttsInputs);
+        });
+    });
+};
+
+const initSendBtn = () => {
+    const sendBtn = select(".send-btn");
+    sendBtn.addEventListener("click", () => {
+        submitTTS();
+    });
+};
+
+const initClearBtn = () => {
+    const clearBtn = select(".clear-btn");
+    clearBtn.addEventListener("click", () => {
+        confirmClearTTS(() => {
+            clearTTS();
+        });
+    });
+};
+
+const initResetBtn = () => {
+
+};
+
+const initInputs = () => {
+    initIdentityInput();
+    initTTSInput();
+};
+
+const initBtns = () => {
+    initSendBtn();
+    initClearBtn();
+    initResetBtn();
+};
+
+window.addEventListener("load", () => {
+    initInputs();
+    initBtns();
 });

@@ -64,6 +64,10 @@ body{
 body::-webkit-scrollbar{
     display: none;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    display: none;
+}
 
 .btn-primary,
 .btn-primary:visited {
@@ -117,10 +121,16 @@ body::-webkit-scrollbar{
     height: 3px;
     background-color: var(--color-gradient-black-2);
     width: 360px;
+    border-radius: 100px;
+}
+.subtitle-container {
+    display: flex;
+    justify-content: center;
 }
 .subtitle {
     font-size: 24px;
     font-weight: 550;
+    width: 90%;
 }
 /* End Header Section */
 
@@ -139,7 +149,7 @@ body::-webkit-scrollbar{
     margin-bottom: 15px;
 }
 .profile-title {
-    font-size: 14pt;
+    font-size: 16pt;
 }
 .profile-title-underline-container {
     display: flex;
@@ -161,15 +171,44 @@ body::-webkit-scrollbar{
     padding: 8px 16px;
     border-radius: 5px;
     border: none;
-    border: 2px solid var(--color-gradient-black-3);
+    border: 1px solid var(--color-gradient-black-3);
+    box-shadow: 0 0 1.8px 0.8px rgba(0, 0, 0, 0.164);
     color: var(--color-2);
     outline: none;
     background-color: var(--color-4);
     font-weight: 550;
 }
+.profile-input-container input:hover {
+    border: 2px solid var(--color-gradient-black-3);
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.247);
+    
+}
 /* End Profile Section */
 
 /* Main Section */
+.disclaimer-container {
+    display: block;
+    width: 100%;
+}
+.disclaimer-section {
+    margin-left: 4rem;
+    margin-bottom: 2rem;
+    width: 90%;
+}
+.tts-disclaimer {
+    font-size: 16pt;
+    font-weight: var(--bold-3);
+}
+.disclaimer-underline-container {
+    display: flex;
+    width: 100%;
+    margin-top: 2px;
+}
+.disclaimer-underline {
+    width: 100px;
+    height: 2px;
+    background-color: var(--color-gradient-black-2);
+}
 .tts-wrapper {
     display: flex;
     justify-content: center;
@@ -180,22 +219,28 @@ body::-webkit-scrollbar{
 }
 .tts-table {
     border-collapse: collapse;
+    /* display: flex;
+    justify-content: center; */
 }
 .tts-table tr {
     width: calc(40px * 27);
 }
-.tts-table tr td {
-    /* background-color: var(--color-4); */
-}
+/* .tts-table tr td {
+    background-color: var(--color-4);
+} */
 .tts-table tr td input {
     width: 40px;
     height: 40px;
     outline: none;
     text-align: center;
     font-size: 16pt;
+    text-transform: capitalize;
+    font-weight: var(--bold-3);
+    color: var(--color-5);
     border: none;
     border: 1px solid var(--color-gradient-black-2);
     visibility: hidden;
+    background-color: #a4bad66c;
 }
 .visible-tts-input {
     visibility: visible !important;
@@ -240,7 +285,7 @@ body::-webkit-scrollbar{
     margin-bottom: 1rem;
 }
 .question-title {
-    font-size: 16pt;
+    font-size: 22pt;
 }
 .question-title-underline {
     width: 100%;
@@ -320,19 +365,21 @@ body::-webkit-scrollbar{
 }
 .reset-btn {
     border: none;
-    border: 1px solid var(--color-gradient-black-3);
+    border: 0.1px solid var(--color-gradient-black-3);
     padding: 8px 0;
     width: 200px;
     border-radius: 5px;
     background-color: transparent;
     font-weight: 550;
-    box-shadow: 0 0 5px 1px #0002;
+    box-shadow: 0 0 1.8px 0.5px rgba(0, 0, 0, 0.158);
     cursor: pointer;
     transition: 0.2s;
 }
 .reset-btn:hover {
-    background-color: var(--btn-color-4);
-    color: var(--color-4);
+    background-color: var(--bg-color-2);
+    /* color: var(--color-4); */
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.247);
+    transform: scale(1);
 }
 /* End Score Section */
 
@@ -345,7 +392,7 @@ body::-webkit-scrollbar{
 .site-link {
     color: var(--color-gradient-black-2);
     font-weight: 800;
-    font-size: 12pt;
+    font-size: 10pt;
 }
 /* End Site Link Section */
 
@@ -367,3 +414,242 @@ footer {
     color: var(--color-4);
 }
 /* End Footer */
+
+/* Media Query */
+@media screen and (max-width: 1920px) {
+    .tts-table {
+        border-collapse: collapse;
+        display: flex;
+        justify-content: center;
+    }
+}
+@media screen and (max-width: 1024px) {
+    .logo {
+        width: 80px;
+        padding: 30px 20px;
+    }
+    .title {
+        font-size: 32px;
+    }
+    .title-underline {
+        width: 220px;
+    }
+    .subtitle {
+        font-size: 18px;
+    }
+    .profile-title,
+    .tts-disclaimer {
+        font-size: 14pt;
+    }
+    .profile-title-underline {
+        width: 50px;
+    }
+    .profile-input-container input {
+        margin-bottom: 6px;
+        font-size: 10pt;
+    }
+    .tts-container {
+        width: 90%;
+        overflow-x: auto;
+    }
+    .tts-table {
+        border-collapse: collapse;
+        display: flex;
+        justify-content: left;
+    }
+    .tts-table tr td input {
+        width: 32px;
+        height: 32px;
+        font-size: 14pt;
+    }
+    .main-btn-wrapper > button {
+        font-size: 10pt;
+        width: 120px;
+    }
+    .question-title {
+        font-size: 18pt;
+    }
+    .hq-text,
+    .vq-text {
+        font-size: 12pt;
+        padding-bottom: 2px;
+    }
+    .score-title {
+        font-size: 14pt;
+    }
+    .score-table-head {
+        padding: 8px 0;
+        font-size: 10pt;
+    }
+    .score-table-data {
+        font-size: 10pt;
+    }
+    .reset-btn {
+        font-size: 8pt;
+        padding: 8px 0;
+        width: 180px;
+    }
+    .footer-text {
+        font-size: 10pt;
+    }
+}
+@media screen and (max-width: 768px) {
+    .logo {
+        width: 50px;
+        padding: 25px 20px;
+        border-radius: 0 0 40px 40px;
+    }
+    .title {
+        font-size: 24px;
+    }
+    .title-underline {
+        width: 180px;
+    }
+    .subtitle {
+        font-size: 16px;
+    }
+    .profile-container {
+        margin-left: 2rem;
+        width: 200px;
+    }
+    .profile-title {
+        font-size: 12pt;
+    }
+    .profile-title-underline {
+        width: 50px;
+    }
+    .profile-input-container input {
+        font-size: 7pt;
+    }
+    .disclaimer-section {
+        margin-left: 2rem;
+    }
+    .disclaimer-underline {
+        width: 100px;
+    }
+    .tts-container {
+        width: 90%;
+        overflow-x: auto;
+    }
+    .tts-table tr td input {
+        width: 24px;
+        height: 24px;
+        font-size: 10pt;
+    }
+    .main-btn-wrapper > button {
+        font-size: 8pt;
+        width: 100px;
+    }
+    .question-title {
+        font-size: 14pt;
+    }
+    .hq-text,
+    .vq-text {
+        font-size: 10pt;
+        padding-bottom: 2px;
+    }
+    .score-title {
+        font-size: 12pt;
+    }
+    .score-table-head {
+        padding: 8px 0;
+        font-size: 8pt;
+    }
+    .score-table-data {
+        font-size: 8pt;
+    }
+    .reset-btn {
+        font-size: 7pt;
+        padding: 8px 0;
+        width: 150px;
+    }
+    /* .footer-text {
+        font-size: 10pt;
+    } */
+}
+@media screen and (max-width: 576px) {
+    .logo {
+        width: 45px;
+        padding: 20px 15px;
+        border-radius: 0 0 30px 30px;
+    }
+    .title {
+        font-size: 20px;
+    }
+    .title-underline {
+        width: 150px;
+        height: 2px;
+    }
+    .subtitle {
+        font-size: 12px;
+    }
+    .profile-container {
+        margin-left: 1rem;
+        width: 160px;
+    }
+    .profile-title {
+        font-size: 11pt;
+    }
+    .profile-title-underline {
+        width: 50px;
+    }
+    .profile-input-container input {
+        font-size: 7pt;
+        padding: 6px 14px;
+    }
+    .disclaimer-section {
+        margin-left: 1rem;
+    }
+    .tts-disclaimer {
+        font-size: 10pt;
+    }
+    .tts-table tr td input {
+        width: 20px;
+        height: 20px;
+        font-size: 10pt;
+    }
+    .main-btn-wrapper > button {
+        font-size: 7pt;
+        width: 100px;
+    }
+    .question-wrapper {
+        width: 95%;
+    }
+    .question-title {
+        font-size: 13pt;
+    }
+    .hq-text,
+    .vq-text {
+        font-size: 9pt;
+        padding-bottom: 2px;
+    }
+    .score-title {
+        font-size: 11pt;
+    }
+    .score-title-underline {
+        width: 100px;
+    }
+    .score-table-head {
+        padding: 8px 0;
+        font-size: 8pt;
+    }
+    .score-table-data {
+        font-size: 8pt;
+    }
+    .reset-btn {
+        font-size: 7pt;
+        padding: 8px 0;
+        width: 150px;
+    }
+    .site-link {
+        font-size: 8pt;
+    }
+    /* .footer-text {
+        font-size: 10pt;
+    } */
+}
+@media screen and (max-width: 420px) {
+    .tts-disclaimer {
+        font-size: 8pt;
+    }
+}

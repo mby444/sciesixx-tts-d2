@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="TTS: Teka Teki Silang Deret II">
+    <meta property="og:description" content="Teka teki silang dari deret dua kelas XI Mipa 6 tentang Gangguan Sistem Indra dan Pengaruh NAPZA Terhadap Sistem Koordinasi.">
+    <meta property="og:image" content="images/favicon.ico">
+
     <title>TTS BIOLOGI DERET II</title>
+    <!-- Sweetalert 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" integrity="sha256-t0FDfwj/WoMHIBbmFfuOtZv1wtA977QCfsFR3p1K4No=" crossorigin="anonymous"></script>
+    <!-- CSS -->
     <link rel="stylesheet" href="./css/style.css">
+    <!-- Fav icon -->
     <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -35,12 +44,20 @@
             </div>
             <div class="profile-input-container">
                 <input type="text" class="profile-input name-input" placeholder="Masukan Nama">
-                <input type="text" class="profile-input roll-input" placeholder="Masukan Nomor Absen">
+                <input type="number" class="profile-input roll-input" placeholder="Masukan Nomor Absen">
                 <input type="text" class="profile-input grade-input" placeholder="Masukan Kelas">
             </div>
         </div>
     </section>
     <section class="main-section">
+        <div class="disclaimer-container">
+            <div class="disclaimer-section">
+                <h4 class="tts-disclaimer">Anda dapat menggeser ke kanan untuk mengerjakan.</h4>
+                <div class="disclaimer-underline-container">
+                    <div class="disclaimer-underline"></div>
+                </div>
+            </div>
+        </div>
         <div class="tts-wrapper">
             <div class="tts-container">
                 <table class="tts-table">
@@ -871,11 +888,11 @@
         </div>
     </section>
     <section class="site-link-section">
-        <a href="https://sciesixx.com" class="site-link">www.sciesixx.com</a>
+        <a href="https://sciesixx.com" target="_blank" class="site-link">www.sciesixx.com</a>
     </section>
     <footer class="footer">
         <div class="footer-text-container">
-            <span class="footer-text footer-text-1">POWERED BY</span> <span class="footer-text footer-text-2"><a href="https://sciesixx.com" class="footer-text-link">SCIESIXX</a></span>
+            <span class="footer-text footer-text-1">POWERED BY</span> <span class="footer-text footer-text-2"><a href="https://sciesixx.com" target="_blank" class="footer-text-link">SCIESIXX</a></span>
         </div>
     </footer>
     <script type="module" src="./js/main.js"></script>
