@@ -11,6 +11,10 @@ const showSuccess = async (title="Sukses", text="", icon="success") => {
     await Swal.fire({ title, text, icon });
 };
 
+const showLoader = async () => {
+    console.log("Loading...");
+};
+
 const getProgress = (key) => {
     return localStorage.getItem(key);
 };
@@ -24,12 +28,38 @@ const deleteProgress = (key) => {
     localStorage.removeItem(key);
 };
 
-const setSubmitMode = () => {
-
+const clearProgress = () => {
+    const storageKeys = ["@sciesixx_tts_identity", "@sciesixx_tts_main", "@sciesixx_tts_submitted", "@sciesixx_tts_corrected"];
+    storageKeys.forEach((storageKey) => {
+        deleteProgress(storageKey);
+    });
 };
 
-const unsetSubmitMode = () => {
+const blurAllInput = () => {
+    const tempInput = document.createElement("input");
+    document.body.appendChild(tempInput);
+    tempInput.focus();
+    document.body.removeChild(tempInput);
+};
 
+const colorizeTTSInputs = (correctedAnswers) => {
+    const tableInputs = selectAll(".tts-table input");
+    const redColor = "#FF4D3F";
+    const greenColor = "#00FF90";
+    correctedAnswers.forEach((correctedAnswer) => {
+        const color = correctedAnswer.correctAnswer ? greenColor : redColor;
+        correctedAnswer.answerGroup.forEach((order) => {
+            tableInputs[order - 1].style.backgroundColor = color;
+        });
+    });
+};
+
+const decolorizeTTSInputs = () => {
+    const defaultColor = "#a4bad66c";
+    const ttsInputs = selectAll(".visible-tts-input");
+    ttsInputs.forEach((input) => {
+        input.style.backgroundColor = defaultColor;
+    });
 };
 
 const storeIdentityInput = (name, roll, grade) => {
@@ -48,9 +78,14 @@ const storeTTSInput = (...ttsInputLists) => {
     saveProgress(storageKey, ttsValues);
 };
 
-const storeSubmittedTTSAnswer = (answers) => {
+const storeSubmittedTTSAnswers = (answers) => {
     const storageKey = "@sciesixx_tts_submitted";
     saveProgress(storageKey, answers);
+};
+
+const storeCorrectedTTSAnswers = (correctedAnswers) => {
+    const storageKey = "@sciesixx_tts_corrected";
+    saveProgress(storageKey, correctedAnswers);
 };
 
 const getUserIdentity = () => {
@@ -70,8 +105,15 @@ const getTTSAnswer = () => {
     return ttsInputs;
 };
 
-const getSubmittedTTSAnswer = () => {
+const getSubmittedTTSAnswers = () => {
     const storageKey = "@sciesixx_tts_submitted";
+    const storedData = getProgress(storageKey);
+    const data = storedData && typeof storedData === "string" ? JSON.parse(storedData) : storedData;
+    return data;
+};
+
+const getCorrectedTTSAnswers = () => {
+    const storageKey = "@sciesixx_tts_corrected";
     const storedData = getProgress(storageKey);
     const data = storedData && typeof storedData === "string" ? JSON.parse(storedData) : storedData;
     return data;
@@ -93,6 +135,16 @@ const getTTSAnswerKeys = async () => {
         console.log(err);
         return [];
     }
+};
+
+const genCorrectedTTSAnswers = (answers, answerKeys) => {
+    return answers.map((answer, i) => {
+        const id = answer.id;
+        const alphabets = answer.answer.split("").map((a) => a.toUpperCase());
+        const answerGroup = answerGroups[i];
+        const correctAnswer = answer.answer.toUpperCase() === answerKeys[i].answer.toUpperCase();
+        return { id, alphabets, answerGroup, correctAnswer };
+    });
 };
 
 const confirmSubmit = async () => {
@@ -143,19 +195,23 @@ const sendUserResult = async (data) => {
         });
         const response = await rawResponse.json();
         console.log(response);
+        return response;
     } catch (err) {
         console.log(err);
+        return err;
     }
 };
 
-const sendRawUserResult = async (data) => {
+const sendRawUserResult = async (data, correctedData) => {
     const confirmation = await confirmSubmit();
     const submitError = checkSubmitError(data);
     if (!confirmation) return;
-    if (submitError instanceof Error) {
-        return await showError("Error", submitError.message);
-    }
-    await sendUserResult(data);
+    showLoader();
+    if (submitError instanceof Error) return await showError("Error", submitError.message);
+    const sentUserResult = await sendUserResult(data);
+    if (sentUserResult instanceof Error) return showError("Maaf", "Telah terjadi kesalahan, mohon periksa kembali koneksi internet anda");
+    storeSubmittedTTSAnswers(data);
+    storeCorrectedTTSAnswers(correctedData);
     await showSuccess("Jawaban Terkirim!", "Terima kasih telah mengerjakan!");
 };
 
@@ -186,12 +242,14 @@ const formatComparedResult = ({ accuracy, rightAnswer, wrongAnswer }) => {
 
 const submitTTS = async () => {
     const userIdentity = getUserIdentity();
-    const ttsAnswer = getTTSAnswer();
+    const ttsAnswers = getTTSAnswer();
     const ttsAnswerKeys = await getTTSAnswerKeys();
-    const comparedResult = compareTTSAnswer(ttsAnswer, ttsAnswerKeys);
+    const comparedResult = compareTTSAnswer(ttsAnswers, ttsAnswerKeys);
+    const correctedTTSAnswers = genCorrectedTTSAnswers(ttsAnswers, ttsAnswerKeys);
     const formattedComparedResult = formatComparedResult(comparedResult);
     const userResult = { ...userIdentity, ...formattedComparedResult };
-    await sendRawUserResult(userResult);
+    await sendRawUserResult(userResult, correctedTTSAnswers);
+    location.reload();
 };
 
 const restoreIdentityInput = (...inputLists) => {
@@ -205,30 +263,77 @@ const restoreIdentityInput = (...inputLists) => {
     });
 };
 
+const displayScore = () => {
+    const scoreElements = selectAll(".score-table-data");
+    const submittedTTSAnswers = getSubmittedTTSAnswers();
+    const scoreList = [
+        submittedTTSAnswers?.accuracy ?? "-",
+        submittedTTSAnswers?.rightAnswer ?? "-",
+        submittedTTSAnswers?.wrongAnswer ?? "-",
+    ];
+    scoreElements.forEach((element, i) => {
+        element.innerHTML = scoreList[i];
+    });
+};
+
+const emptyScore = () => {
+    const scoreElements = selectAll(".score-table-data");
+    scoreElements.forEach((element) => {
+        element.innerHTML = "-";
+    });
+};
+
 // ta = toggleactive
 const taIdentityInput = (shouldActive = false) => {
     const inputs = selectAll(".profile-input");
     inputs.forEach((input) => {
-        shouldActive ? input.removeAttribute("disabled") : input.setAttribute("disabled", "disabled");
+        if (shouldActive) {
+            input.removeAttribute("disabled");
+            return;
+        }
+        input.setAttribute("disabled", "disabled");
     });
 };
 
 const taTTSInput = (shouldActive = false) => {
     const inputs = selectAll(".visible-tts-input");
-    inputs.forEach((input) => {
-        shouldActive ? input.removeAttribute("readonly") : input.setAttribute("readonly", "readonly");
-    });
+    const correctedTTSAnswers = getCorrectedTTSAnswers();
+    switch (shouldActive) {
+        case true: {
+            inputs.forEach((input) => {
+                decolorizeTTSInputs();
+                input.removeAttribute("readonly");
+                emptyScore();
+            });
+            break;
+        }
+        default: {
+            inputs.forEach((input) => {
+                colorizeTTSInputs(correctedTTSAnswers);
+                input.setAttribute("readonly", "readonly");
+                displayScore();
+            });
+        }
+    }
+};
+
+const getIsSubmitMode = () => {
+    const submittedTTSAnswers = getSubmittedTTSAnswers();
+    const correctedTTSAnswers = getCorrectedTTSAnswers();
+    return Boolean(submittedTTSAnswers || correctedTTSAnswers);
 };
 
 // tm = togglemode
 const tmIdentityInput = () => {
-    const submittedTTSAnswers = getSubmittedTTSAnswer();
-    if (submittedTTSAnswers)  return taIdentityInput(true);
+    const isSubmitMode = getIsSubmitMode();
+    if (!isSubmitMode) return taIdentityInput(true);
     taIdentityInput(false);
 };
 
 const tmTTSInput = () => {
-    
+    const isSubmitMode = getIsSubmitMode();
+    if (!isSubmitMode) return taTTSInput(true);
+    taTTSInput(false);
 };
 
 const restoreTTSInput = (...ttsInputLists) => {
@@ -248,11 +353,18 @@ const enableTTS = () => {
     });
 };
 
+const toggleMainBtn = (submitMode = false) => {
+    const btnWrappers = selectAll(".main-btn-wrapper");
+    const firstIndex = submitMode ? 0 : 1;
+    const secondIndex = submitMode ? 1 : 0;
+    btnWrappers[firstIndex].classList.add("hidden");
+    btnWrappers[secondIndex].classList.remove("hidden");
+};
+
 const confirmClearTTS = (callback=Function(), errCallback=Function()) => {
-    const isSubmitMode = false;
     const ttsInputs = selectAll(".visible-tts-input");
     const isTTSEmpty = [...ttsInputs].every((input) => !input.value);
-    if (isSubmitMode || isTTSEmpty) return errCallback();
+    if (isTTSEmpty) return errCallback();
     const confirmMessage = "Hapus semua kolom?";
     switch (typeof Swal) {
         case "function": {
@@ -279,6 +391,24 @@ const confirmClearTTS = (callback=Function(), errCallback=Function()) => {
     }
 };
 
+const confirmResetTTS = (callback=Function(), errCallback=Function()) => {
+    const confirmMessage = "Mulai ulang pengerjaan dari awal?";
+    Swal.fire({
+        title: confirmMessage,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3741",
+        confirmButtonText: "Reset",
+        cancelButtonText: "Batal",
+    })
+    .then((result) => {
+        result.isConfirmed ? callback() : errCallback();
+    })
+    .catch((err) => {
+        errCallback();
+    });
+};
+
 const clearTTS = () => {
     const ttsStorageKey = "@sciesixx_tts_main";
     const ttsInputs = selectAll(".visible-tts-input");
@@ -288,6 +418,17 @@ const clearTTS = () => {
     });
 };
 
+const resetTTS = () => {
+    clearProgress();
+    location.reload();
+};
+
+const limitTTSInput = (element) => {
+    const value = element.value?.trim();
+    if (!value) return element.value = "";
+    element.value = value[0]?.toUpperCase();
+};
+
 const initIdentityInput = () => {
     const nameInput = select(".name-input");
     const rollInput = select(".roll-input");
@@ -295,6 +436,7 @@ const initIdentityInput = () => {
     const inputLists = [nameInput, rollInput, gradeInput];
 
     restoreIdentityInput(...inputLists);
+    tmIdentityInput();
 
     nameInput.addEventListener("input", () => {
         storeIdentityInput(...inputLists);
@@ -311,8 +453,10 @@ const initTTSInput = () => {
     enableTTS();
     const ttsInputs = selectAll(".visible-tts-input");
     restoreTTSInput(...ttsInputs);
+    tmTTSInput();
     ttsInputs.forEach((ttsInput) => {
         ttsInput.addEventListener("input", () => {
+            limitTTSInput(ttsInput);
             storeTTSInput(...ttsInputs);
         });
     });
@@ -320,6 +464,7 @@ const initTTSInput = () => {
 
 const initSendBtn = () => {
     const sendBtn = select(".send-btn");
+    sendBtn.removeAttribute("disabled");
     sendBtn.addEventListener("click", () => {
         submitTTS();
     });
@@ -327,6 +472,7 @@ const initSendBtn = () => {
 
 const initClearBtn = () => {
     const clearBtn = select(".clear-btn");
+    clearBtn.removeAttribute("disabled");
     clearBtn.addEventListener("click", () => {
         confirmClearTTS(() => {
             clearTTS();
@@ -335,7 +481,18 @@ const initClearBtn = () => {
 };
 
 const initResetBtn = () => {
+    const resetBtn = select(".reset-btn");
+    resetBtn.removeAttribute("disabled");
+    resetBtn.addEventListener("click", () => {
+        confirmResetTTS(() => {
+            resetTTS();
+        });
+    });
+};
 
+const initToggleBtn = () => {
+    const isSubmitMode = getIsSubmitMode();
+    toggleMainBtn(isSubmitMode);
 };
 
 const initInputs = () => {
@@ -347,6 +504,7 @@ const initBtns = () => {
     initSendBtn();
     initClearBtn();
     initResetBtn();
+    initToggleBtn();
 };
 
 window.addEventListener("load", () => {

@@ -251,7 +251,8 @@ input::-webkit-inner-spin-button {
     align-items: center;
     margin-top: 4rem;
 }
-.main-btn-wrapper > button {
+.send-btn,
+.clear-btn {
     background-color: var(--btn-color-4);
     font-size: 12pt;
     padding: 5px 0;
@@ -265,7 +266,8 @@ input::-webkit-inner-spin-button {
     cursor: pointer;
     transition: 0.1s;
 }
-.main-btn-wrapper > button:hover {
+.send-btn:hover, 
+.clear-btn:hover {
     background-color: var(--color-3);
 }
 /* End Main Section */
@@ -415,6 +417,12 @@ footer {
 }
 /* End Footer */
 
+/* Additional */
+.hidden {
+    display: none !important;
+}
+/* End Additional */
+
 /* Media Query */
 @media screen and (max-width: 1920px) {
     .tts-table {
@@ -462,7 +470,8 @@ footer {
         height: 32px;
         font-size: 14pt;
     }
-    .main-btn-wrapper > button {
+    .send-btn,
+    .clear-btn {
         font-size: 10pt;
         width: 120px;
     }
@@ -536,7 +545,8 @@ footer {
         height: 24px;
         font-size: 10pt;
     }
-    .main-btn-wrapper > button {
+    .send-btn,
+    .clear-btn {
         font-size: 8pt;
         width: 100px;
     }
@@ -608,7 +618,8 @@ footer {
         height: 20px;
         font-size: 10pt;
     }
-    .main-btn-wrapper > button {
+    .send-btn,
+    .clear-btn {
         font-size: 7pt;
         width: 100px;
     }
