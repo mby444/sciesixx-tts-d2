@@ -164,8 +164,8 @@ const checkSubmitError = (data) => {
         const ttsInputs = selectAll(".visible-tts-input");
         const isValidUserIdentity = Boolean(data.name?.trim() && data.roll?.trim() && data.grade?.trim());
         const isValidTTSInputs = [...ttsInputs].every((input) => Boolean(input.value?.trim()));
-        if (!isValidUserIdentity) throw new Error("Data identitas tidak lengkap");
         if (!isValidTTSInputs) throw new Error("Semua kolom wajib diisi");
+        if (!isValidUserIdentity) throw new Error("Data identitas tidak lengkap");
         return null;
     } catch (err) {
         return err;
@@ -213,6 +213,7 @@ const sendRawUserResult = async (data, correctedData) => {
     storeSubmittedTTSAnswers(data);
     storeCorrectedTTSAnswers(correctedData);
     await showSuccess("Jawaban Terkirim!", "Terima kasih telah mengerjakan!");
+    location.reload();
 };
 
 const compareTTSAnswer = (answers, answerKeys) => {
@@ -249,7 +250,6 @@ const submitTTS = async () => {
     const formattedComparedResult = formatComparedResult(comparedResult);
     const userResult = { ...userIdentity, ...formattedComparedResult };
     await sendRawUserResult(userResult, correctedTTSAnswers);
-    location.reload();
 };
 
 const restoreIdentityInput = (...inputLists) => {
@@ -429,6 +429,12 @@ const limitTTSInput = (element) => {
     element.value = value[0]?.toUpperCase();
 };
 
+// const unfocusTTSInput = (element) => {
+//     const value = element.value?.trim();
+//     if (!value) return;
+//     element.blur();
+// };
+
 const initIdentityInput = () => {
     const nameInput = select(".name-input");
     const rollInput = select(".roll-input");
@@ -457,6 +463,7 @@ const initTTSInput = () => {
     ttsInputs.forEach((ttsInput) => {
         ttsInput.addEventListener("input", () => {
             limitTTSInput(ttsInput);
+            // unfocusTTSInput(ttsInput);
             storeTTSInput(...ttsInputs);
         });
     });
